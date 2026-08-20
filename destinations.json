@@ -3,5 +3,10 @@
     "label": "CultiDatos.uy",
     "url": "https://inia.uy/cultidatosuy-aplicacion-de-analisis-y-seleccion-de-cultivares",
     "updated": "2026-08-20"
+  },
+  "genesys": {
+    "label": "Genesys.prg",
+    "url": "https://www.genesys-pgr.org/",
+    "updated": "2026-08-20"
   }
 }
