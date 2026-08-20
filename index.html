@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mis QR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #eff0e6;
+    --surface: #fbfbf6;
+    --surface-2: #f3f3ea;
+    --ink: #20261d;
+    --ink-soft: #5b6350;
+    --ink-faint: #8b9280;
+    --accent: #a87c2e;
+    --accent-strong: #7d5c1f;
+    --accent-on: #fbfbf6;
+    --line: #d8d8c8;
+    --bad: #b14834;
+    --bad-bg: #f6e6e1;
+    --shadow: 0 1px 2px rgba(32, 38, 29, 0.06), 0 12px 32px -16px rgba(32, 38, 29, 0.22);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14170f; --surface: #1c2016; --surface-2: #232819;
+      --ink: #ece8d8; --ink-soft: #a2a88f; --ink-faint: #6d7460;
+      --accent: #d9ae5b; --accent-strong: #eec37c; --accent-on: #1c1400;
+      --line: #333829; --bad: #e08267; --bad-bg: #362320;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 32px -16px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14170f; --surface: #1c2016; --surface-2: #232819;
+    --ink: #ece8d8; --ink-soft: #a2a88f; --ink-faint: #6d7460;
+    --accent: #d9ae5b; --accent-strong: #eec37c; --accent-on: #1c1400;
+    --line: #333829; --bad: #e08267; --bad-bg: #362320;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 32px -16px rgba(0,0,0,.6);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink);
+    font-family: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    display: flex; justify-content: center; padding: 48px 20px 64px;
+  }
+  #app { width: 100%; max-width: 620px; }
+
+  /* --- redirect view --- */
+  .redirect-stage { display: flex; justify-content: center; padding-top: 60px; }
+  .redirect-card {
+    width: 100%; max-width: 420px; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 6px; box-shadow: var(--shadow); padding: 34px 30px; text-align: center;
+  }
+  .eyebrow {
+    margin: 0 0 6px; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--accent-strong);
+  }
+  .dest-preview {
+    margin: 0 0 22px; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13px;
+    color: var(--ink-soft); word-break: break-all;
+  }
+  .btn {
+    appearance: none; border: none; border-radius: 4px; font-family: "Archivo", sans-serif;
+    font-weight: 600; font-size: 14px; padding: 12px 22px; cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-accent { background: var(--accent); color: var(--accent-on); }
+  .btn-accent:hover { background: var(--accent-strong); }
+  .btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .btn-ghost:hover { border-color: var(--ink-faint); }
+
+  /* --- dashboard --- */
+  .kicker {
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--accent-strong); margin: 0 0 10px;
+  }
+  h1 {
+    font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 32px; line-height: 1.15;
+    letter-spacing: -.01em; margin: 0 0 8px; text-wrap: balance;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 15px; line-height: 1.55; max-width: 52ch; margin: 0 0 30px; }
+
+  .qr-list { display: flex; flex-direction: column; gap: 16px; }
+  .qr-card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+    box-shadow: var(--shadow); padding: 20px; display: grid; grid-template-columns: 92px 1fr; gap: 18px;
+  }
+  .qr-thumb {
+    width: 92px; height: 92px; background: #fff; border: 1px solid var(--line); border-radius: 4px;
+    padding: 8px; display: flex; align-items: center; justify-content: center;
+  }
+  .qr-thumb svg { width: 100%; height: 100%; display: block; }
+  .qr-info { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .qr-label { font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 17px; }
+  .qr-url {
+    font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12.5px; color: var(--ink-soft);
+    word-break: break-all;
+  }
+  .qr-meta { font-size: 11.5px; color: var(--ink-faint); }
+  .qr-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .qr-actions .btn { padding: 8px 14px; font-size: 12.5px; }
+
+  .empty {
+    background: var(--surface); border: 1px dashed var(--line); border-radius: 6px;
+    padding: 28px; text-align: center; color: var(--ink-soft); font-size: 14px;
+  }
+  .error-box {
+    background: var(--bad-bg); color: var(--bad); border-radius: 6px; padding: 14px 18px; font-size: 14px;
+  }
+  footer.hint { margin-top: 30px; font-size: 12.5px; color: var(--ink-faint); line-height: 1.6; }
+  code { font-family: "IBM Plex Mono", ui-monospace, monospace; background: var(--surface-2); padding: 1px 5px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<div id="app">Cargando…</div>
+
+<script src="qrcode.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function qrSvg(text, cellSize, margin) {
+    var qr = qrcode(0, 'M');
+    qr.addData(text);
+    qr.make();
+    return { qr: qr, svg: qr.createSvgTag({ cellSize: cellSize, margin: margin, scalable: true }) };
+  }
+
+  function qrToPngBlob(qr, cellSize, margin) {
+    var count = qr.getModuleCount();
+    var size = count * cellSize + margin * 2;
+    var canvas = document.createElement('canvas');
+    canvas.width = size; canvas.height = size;
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, size, size);
+    ctx.fillStyle = '#000000';
+    for (var r = 0; r < count; r++) {
+      for (var c = 0; c < count; c++) {
+        if (qr.isDark(r, c)) ctx.fillRect(c * cellSize + margin, r * cellSize + margin, cellSize, cellSize);
+      }
+    }
+    return canvas.toDataURL('image/png');
+  }
+
+  function idUrl(id) {
+    return location.origin + location.pathname + '?id=' + encodeURIComponent(id);
+  }
+
+  function renderRedirect(app, id, entry) {
+    if (!entry || !entry.url) {
+      app.innerHTML =
+        '<div class="redirect-stage"><div class="redirect-card">' +
+        '<p class="eyebrow">QR no configurado</p>' +
+        '<p class="dest-preview">No encontramos "' + escapeHtml(id) + '" en destinations.json. Agregalo ahí para activarlo.</p>' +
+        '</div></div>';
+      return;
+    }
+    app.innerHTML =
+      '<div class="redirect-stage"><div class="redirect-card">' +
+      '<p class="eyebrow">Este QR lleva a</p>' +
+      '<p class="dest-preview">' + escapeHtml(entry.url) + '</p>' +
+      '<a href="' + escapeHtml(entry.url) + '" class="btn btn-accent">Ir ahora →</a>' +
+      '</div></div>';
+    setTimeout(function () { location.replace(entry.url); }, 150);
+  }
+
+  function renderDashboard(app, data) {
+    var ids = Object.keys(data || {});
+
+    var html = '<p class="kicker">Panel</p>';
+    html += '<h1>Tus códigos QR</h1>';
+    html += '<p class="subtitle">Cada tarjeta es un QR independiente. Para cambiar un destino o agregar uno nuevo, editá <code>destinations.json</code> en el repositorio.</p>';
+
+    if (ids.length === 0) {
+      html += '<div class="empty">Todavía no hay ningún QR en <code>destinations.json</code>.</div>';
+      app.innerHTML = html;
+      return;
+    }
+
+    html += '<div class="qr-list">';
+    ids.forEach(function (id) {
+      var entry = data[id] || {};
+      html +=
+        '<div class="qr-card">' +
+        '<div class="qr-thumb" id="thumb-' + escapeHtml(id) + '"></div>' +
+        '<div class="qr-info">' +
+        '<span class="qr-label">' + escapeHtml(entry.label || id) + '</span>' +
+        '<span class="qr-url">' + escapeHtml(entry.url || '(sin destino)') + '</span>' +
+        (entry.updated ? '<span class="qr-meta">Actualizado ' + escapeHtml(entry.updated) + '</span>' : '') +
+        '<div class="qr-actions">' +
+        '<button type="button" class="btn btn-ghost" data-copy="' + escapeHtml(idUrl(id)) + '">Copiar enlace del QR</button>' +
+        '<a class="btn btn-ghost" data-dl-id="' + escapeHtml(id) + '" href="#">Descargar PNG</a>' +
+        '</div></div></div>';
+    });
+    html += '</div>';
+
+    html += '<footer class="hint">El enlace de cada QR es <code>' + escapeHtml(location.origin + location.pathname) + '?id=NOMBRE</code>, donde <code>NOMBRE</code> es la clave que le pusiste en <code>destinations.json</code>.</footer>';
+
+    app.innerHTML = html;
+
+    ids.forEach(function (id) {
+      var entry = data[id] || {};
+      var target = idUrl(id);
+      var built = qrSvg(target, 5, 10);
+      var thumb = document.getElementById('thumb-' + id);
+      if (thumb) thumb.innerHTML = built.svg;
+
+      var dlLink = app.querySelector('[data-dl-id="' + CSS.escape(id) + '"]');
+      if (dlLink) {
+        dlLink.addEventListener('click', function (ev) {
+          ev.preventDefault();
+          var hi = qrSvg(target, 10, 24);
+          var pngUrl = qrToPngBlob(hi.qr, 10, 24);
+          var a = document.createElement('a');
+          a.href = pngUrl;
+          a.download = 'qr-' + id + '.png';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        });
+      }
+    });
+
+    app.querySelectorAll('[data-copy]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var url = btn.getAttribute('data-copy');
+        if (!navigator.clipboard) return;
+        navigator.clipboard.writeText(url).then(function () {
+          var original = btn.textContent;
+          btn.textContent = 'Copiado';
+          setTimeout(function () { btn.textContent = original; }, 1200);
+        }).catch(function () {});
+      });
+    });
+  }
+
+  function init() {
+    var app = document.getElementById('app');
+    var params = new URLSearchParams(location.search);
+    var id = params.get('id');
+
+    fetch('./destinations.json', { cache: 'no-store' })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (id) {
+          renderRedirect(app, id, data[id]);
+        } else {
+          renderDashboard(app, data);
+        }
+      })
+      .catch(function () {
+        app.innerHTML = '<div class="error-box">No se pudo leer destinations.json. Revisá que el archivo exista y tenga formato JSON válido.</div>';
+      });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>
