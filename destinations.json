@@ -4,9 +4,14 @@
     "url": "https://inia.uy/cultidatosuy-aplicacion-de-analisis-y-seleccion-de-cultivares",
     "updated": "2026-08-20"
   },
-  "genesys": {
-    "label": "Genesys.prg",
-    "url": "https://www.genesys-pgr.org/",
-    "updated": "2026-08-20"
+  "diacampo2026app": {
+    "label": "Día de Campo Forrajeras 2026 - App Móvil",
+    "url": "https://app.powerbi.com/view?r=eyJrIjoiZTQyZTRiNzAtYWU0NC00OTQ2LWEwNzMtYWIwZDI5MTQzZGRlIiwidCI6ImM1MjBiMmE5LTgxYTktNDVmYi1iYmViLTJjNThlNWJiODAxNCIsImMiOjR9",
+    "updated": "2026-09-28"
+  },
+  "diacampo2026": {
+    "label": "Día de Campo Forrajeras 2026",
+    "url": "https://app.powerbi.com/view?r=eyJrIjoiNzU4ODMzZmEtNDE1Zi00Yzc4LTk0NTgtMzA4OTI1ZGZiYWRkIiwidCI6ImM1MjBiMmE5LTgxYTktNDVmYi1iYmViLTJjNThlNWJiODAxNCIsImMiOjR9",
+    "updated": "2026-09-28"
   }
 }
